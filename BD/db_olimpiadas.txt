@@ -1,6 +1,7 @@
 CREATE DATABASE db_olimpiadas;
+GO
 USE db_olimpiadas;
-
+GO
 CREATE TABLE [dbo].[UserProfile] (
     [Id]        INT         IDENTITY(1, 1) PRIMARY KEY NOT NULL,
     [UserName ] VARCHAR (50) NOT NULL,
