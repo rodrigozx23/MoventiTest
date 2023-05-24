@@ -1,0 +1,148 @@
+﻿@model TestOlimpiadas.Models.ComplejoOlimpiada
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ComplejoOlimpiada CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            .form-group button {
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                .form-group button[type="submit"] {
+                    background-color: #008CBA;
+                }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+</head>
+<body>
+    <h2>Crear ComplejoOlimpiada</h2>
+    <div class="container">
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            <label for="update-id">ID:</label>
+            <input type="text" id="update-id" placeholder="Enter ID" readonly>
+        </div>
+        <div class="form-group">
+            <label for="update-sedeid">Sede Id:</label>
+            <input type="text" id="update-sedeid" placeholder="Enter Sede Id">
+        </div>
+        <div class="form-group">
+            <label for="update-tipocomplejo">Tipo Complejo:</label>
+            <input type="text" id="update-tipocomplejo" placeholder="Enter Tipo Complejo">
+        </div>
+        <div class="form-group">
+            <label for="update-localizacion">Localizacion:</label>
+            <input type="text" id="update-localizacion" placeholder="Enter Localizacion">
+        </div>
+        <div class="form-group">
+            <label for="update-jefeorganizacion">Jefe Organizacion:</label>
+            <input type="text" id="update-jefeorganizacion" placeholder="Enter Jefe Organizacion">
+        </div>
+        <div class="form-group">
+            <label for="update-areatotalocupada">Area Total Ocupada:</label>
+            <input type="text" id="update-areatotalocupada" placeholder="Enter Area Total Ocupada">
+        </div>
+        <button onclick="updateComplejoOlimpiada()">Editar</button>
+    </div>
+
+    <script>
+
+        function GetComplejoOlimpiada() {
+            var id = document.getElementById("Id").value;
+
+            $.ajax({
+                url: '/complejoOlimpiada/ComplejoOlimpiadaDetail/' + id,
+                type: "GET",
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById("update-id").value = id;
+                    document.getElementById("update-sedeid").value = response.sedeId;
+                    document.getElementById("update-tipocomplejo").value = response.tipoComplejo;
+                    document.getElementById("update-localizacion").value = response.localizacion;
+                    document.getElementById("update-jefeorganizacion").value = response.jefeOrganizacion;
+                    document.getElementById("update-areatotalocupada").value = response.areaTotalOcupada;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
+
+        function updateComplejoOlimpiada() {
+            var id = document.getElementById("update-id").value;
+            var sedeid = document.getElementById("update-sedeid").value;
+            var tipocomplejo = document.getElementById("update-tipocomplejo").value;
+            var localizacion = document.getElementById("update-localizacion").value;
+            var jefeorganizacion = document.getElementById("update-jefeorganizacion").value;
+            var areatotalocupada = document.getElementById("update-areatotalocupada").value;
+
+            if (sedeid == "" || tipocomplejo == "" || localizacion == "" || jefeorganizacion == "" || areatotalocupada == "") {
+                alert('Campos con elementos vacios!!!!!');
+                return;
+            }
+
+            $.ajax({
+                url: '/complejoOlimpiada/Edit',
+                type: "POST",
+                data: {
+                    Id: id,
+                    SedeId: sedeid,
+                    TipoComplejo: tipocomplejo,
+                    Localizacion: localizacion,
+                    JefeOrganizacion: jefeorganizacion,
+                    AreaTotalOcupada: areatotalocupada
+                },
+                success: function (response) {
+
+                    alert(response);
+                    window.location.href = "/complejoOlimpiada";
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+
+            });
+        }
+
+        $(document).ready(function () { GetComplejoOlimpiada(); });
+    </script>
+
+</body>
+</html>

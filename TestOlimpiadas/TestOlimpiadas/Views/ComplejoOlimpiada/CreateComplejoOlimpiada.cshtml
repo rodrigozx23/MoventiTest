@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>ComplejoOlimpiada CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            .form-group button {
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                .form-group button[type="submit"] {
+                    background-color: #008CBA;
+                }
+    </style>
+</head>
+<body>
+    <h2>Crear ComplejoOlimpiada</h2>
+    <div class="container">
+        <div class="form-group">
+            <label for="create-sedeid">Sede Id:</label>
+            <input type="text" id="create-sedeid" placeholder="Enter Sede Id">
+        </div>
+        <div class="form-group">
+            <label for="create-tipocomplejo">Tipo Complejo:</label>
+            <input type="text" id="create-tipocomplejo" placeholder="Enter Tipo Complejo">
+        </div>
+        <div class="form-group">
+            <label for="create-localizacion">Localizacion:</label>
+            <input type="text" id="create-localizacion" placeholder="Enter Localizacion">
+        </div>
+        <div class="form-group">
+            <label for="create-jefeorganizacion">Jefe Organizacion:</label>
+            <input type="text" id="create-jefeorganizacion" placeholder="Enter Jefe Organizacion">
+        </div>
+        <div class="form-group">
+            <label for="create-areatotalocupada">Area Total Ocupada:</label>
+            <input type="text" id="create-areatotalocupada" placeholder="Enter Area Total Ocupada">
+        </div>
+        <button onclick="createComplejoOlimpiada()">Create</button>
+    </div>
+
+    <script>
+        function createComplejoOlimpiada() {
+            var sedeid = document.getElementById("create-sedeid").value;
+            var tipocomplejo = document.getElementById("create-tipocomplejo").value;
+            var localizacion = document.getElementById("create-localizacion").value;
+            var jefeorganizacion = document.getElementById("create-jefeorganizacion").value;
+            var areatotalocupada = document.getElementById("create-areatotalocupada").value;
+
+            if (sedeid == "" || tipocomplejo == "" || localizacion == "" || jefeorganizacion == "" || areatotalocupada == "") {
+                alert('Campos con elementos vacios!!!!!');
+                return;
+            }
+
+            $.ajax({
+                url: '/complejoOlimpiada/Create',
+                type: "POST",
+                data: {
+                    Id: 0,
+                    SedeId: sedeid,
+                    TipoComplejo: tipocomplejo,
+                    Localizacion: localizacion,
+                    JefeOrganizacion: jefeorganizacion,
+                    AreaTotalOcupada: areatotalocupada
+                },
+                success: function (response) {
+
+                    alert(response);
+                    document.getElementById("create-sedeid").value = "";
+                    document.getElementById("create-tipocomplejo").value = "";
+                    document.getElementById("create-localizacion").value = "";
+                    document.getElementById("create-jefeorganizacion").value = "";
+                    document.getElementById("create-areatotalocupada").value = "";
+ 
+
+                    window.location.href = "/complejoOlimpiada";
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+
+            });
+        }
+    </script>
+
+</body>
+</html>

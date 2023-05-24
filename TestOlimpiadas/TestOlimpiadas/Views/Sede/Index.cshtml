@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Sede CRUD</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .edit-btn {
+            background-color: green;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Sede List</h2>
+    <table id="sedeTable">
+        <tr>
+            <th>Id</th>
+            <th>Numero Complejos</th>
+            <th>Tipo Sede</th>
+            <th>Presupuesto</th>
+            <th>Actions</th>
+        </tr>
+    </table>
+
+    <script>
+
+        function addSedeRow(id, numeroComplejos, presupuesto, tiposede) {
+            var table = document.getElementById("sedeTable");
+            var row = table.insertRow(-1);
+
+            var idCell = row.insertCell(0);
+            var numeroComplejosCell = row.insertCell(1);
+            var tiposedeCell = row.insertCell(2);
+            var presupuestoCell = row.insertCell(3);
+            var actionsCell = row.insertCell(4);
+
+            idCell.innerHTML = id;
+            numeroComplejosCell.innerHTML = numeroComplejos;
+            tiposedeCell.innerHTML = tiposede;
+            presupuestoCell.innerHTML = presupuesto;
+
+            var deleteForm = document.createElement("form");
+            deleteForm.action = "/sede/Delete";
+            deleteForm.method = "post";
+
+            var editForm = document.createElement("form");
+            editForm.action = "/sede/Edit/";
+            editForm.method = "get";
+
+            var idInput = document.createElement("input");
+            idInput.type = "hidden";
+            idInput.name = "id";
+            idInput.value = id;
+
+            var deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", function () {
+                var $tr = $(this).closest('tr'); // gets closest parent tr element to the a
+                var id_row = $tr.find("input[name$=id]").val();
+                deleteSede(deleteForm,id_row);
+            });
+
+            var editButton = document.createElement("button");
+            editButton.className = "edit-btn";
+            editButton.type = "button";
+            editButton.textContent = "Edit";
+            editButton.addEventListener("click", function () {
+                var $tr = $(this).closest('tr'); // gets closest parent tr element to the a
+                var id_row = $tr.find("input[name$=id]").val();
+                editSede(editForm, id_row);
+            });
+
+            deleteForm.appendChild(idInput);
+            deleteForm.appendChild(deleteButton);
+            editForm.appendChild(idInput);
+            editForm.appendChild(editButton);
+            actionsCell.appendChild(deleteForm);
+            actionsCell.appendChild(editForm);
+        }
+
+        function deleteSede(form, id_row) {
+ 
+            $.ajax({
+                url: form.action,
+                type: "POST",
+                data: {
+                    id: id_row
+                },
+                success: function (response) {
+
+                    alert("Sede deleted successfully.");
+                    // Optionally, you can remove the row from the table
+                    form.parentNode.parentNode.remove();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
+
+        function editSede(form, id_row) {
+            window.location.href = form.action + id_row;
+        }
+
+        function getSedeData() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/sede/SedeDetails", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var sedeData = JSON.parse(xhr.responseText);
+                    for (var i = 0; i < sedeData.length; i++) {
+                        var sede = sedeData[i];
+                        addSedeRow(sede.id, sede.numeroComplejos, sede.presupuesto, sede.tipoSede);
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        getSedeData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+CREATE DATABASE db_olimpiadas;
+USE db_olimpiadas;
+
+CREATE TABLE [dbo].[UserProfile] (
+    [Id]        INT         IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+    [UserName ] VARCHAR (50) NOT NULL,
+    [Password]  VARCHAR (50) NOT NULL,
+    [IsActive]  BIT          NOT NULL
+);
+
+GO
+
+CREATE TABLE [dbo].[Sede]
+(
+    [Id] INT   IDENTITY(1, 1) PRIMARY KEY NOT NULL, 
+    [TipoSede] INT NOT NULL, 
+    [NumeroComplejos] INT NOT NULL, 
+    [Presupuesto] FLOAT NOT NULL
+)
+
+GO
+
+CREATE TABLE [dbo].[ComplejoOlimpiada] (
+    [Id]               INT          IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+    [SedeId]           INT          NOT NULL,
+    [TipoComplejo]     INT          NOT NULL,
+    [Localizacion]     VARCHAR (50) NOT NULL,
+    [JefeOrganizacion] VARCHAR (50) NOT NULL,
+    [AreaTotalOcupada] INT          NOT NULL,
+    FOREIGN KEY ([SedeId]) REFERENCES [dbo].[Sede] ([Id])
+);
+
+GO 
+
+CREATE TABLE [dbo].[Evento] (
+    [Id]                  INT      IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+    [Fecha]               DATETIME NOT NULL,
+    [NumeroParticipantes] INT      NOT NULL,
+    [NumeroComisionados]  INT      NOT NULL
+);
+
+GO
+
+CREATE TABLE [dbo].[Comisionario] (
+    [Id]     INT          IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+    [Nombre] VARCHAR (50) NOT NULL,
+    [Rol]    VARCHAR (50) NOT NULL
+);
+
+GO
+
+CREATE TABLE [dbo].[ComisarioEvento] (
+    [Id]             INT IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+    [ComisionarioId] INT NOT NULL,
+    [EventoId]       INT NOT NULL,
+    FOREIGN KEY ([ComisionarioId]) REFERENCES [dbo].[Comisionario] ([Id]),
+    FOREIGN KEY ([EventoId]) REFERENCES [dbo].[Evento] ([Id])
+);
+
+GO
+
+CREATE TABLE [dbo].[Equipamiento] (
+    [Id]          INT          IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+    [Nombre]      VARCHAR (50) NOT NULL,
+    [Descripcion] VARCHAR (50) NOT NULL
+);
+
+GO
+
+CREATE TABLE [dbo].[EventoEquipamiento] (
+    [Id]             INT IDENTITY(1,1) NOT NULL,
+    [EquipamientoId] INT NOT NULL,
+    [EventoId]       INT NOT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    FOREIGN KEY ([EquipamientoId]) REFERENCES [dbo].[Equipamiento] ([Id]),
+    FOREIGN KEY ([EventoId]) REFERENCES [dbo].[Evento] ([Id])
+);
+

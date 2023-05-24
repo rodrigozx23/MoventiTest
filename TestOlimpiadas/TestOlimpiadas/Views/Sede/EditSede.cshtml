@@ -1,0 +1,145 @@
+﻿@model TestOlimpiadas.Models.Sede
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sede CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group button[type="submit"] {
+            background-color: #008CBA;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+</head>
+<body>
+    <h2>Editar Sede</h2>
+    <div class="container">
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            <label for="update-id">ID:</label>
+            <input type="text" id="update-id" placeholder="Enter ID" readonly>
+        </div>
+        <div class="form-group">
+            <label for="update-numero">Numero Complejos:</label>
+            <input type="text" id="update-numero" placeholder="Enter Numero Complejos">
+        </div>
+        <div class="form-group">
+            <label for="update-tiposede">Tipo Sede:</label>
+            <input type="text" id="update-tiposede" placeholder="Enter Tipo Sede">
+        </div>
+        <div class="form-group">
+            <label for="update-presupuesto">Presupuesto:</label>
+            <input type="text" id="update-presupuesto" placeholder="Enter Presupuesto">
+        </div>
+        <button onclick="updateSede()">Update</button>
+    </div>
+    <script>
+
+        function GetSede(){
+            var id = document.getElementById("Id").value;
+
+            $.ajax({
+                url: '/sede/SedeDetail/'+id,
+                type: "GET",
+                success: function (response) {
+                    document.getElementById("update-id").value = id;
+                    document.getElementById("update-numero").value = response.numeroComplejos;
+                    document.getElementById("update-tiposede").value = response.tipoSede;
+                    document.getElementById("update-presupuesto").value = response.presupuesto;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
+            
+        function updateSede() {
+            var id = document.getElementById("update-id").value;
+            var numero = document.getElementById("update-numero").value;
+            var tiposede = document.getElementById("update-tiposede").value;
+            var presupuesto = document.getElementById("update-presupuesto").value;
+
+            if (numero == "" || tiposede == "" || presupuesto == ""){
+                alert('Campos con elementos vacios!!!!!');
+                return;
+            }
+
+            $.ajax({
+                url: '/sede/Edit',
+                type: "POST",
+                data: {
+                    id: id,
+                    NumeroComplejos: numero,
+                    TipoSede: tiposede,
+                    Presupuesto: presupuesto
+                },
+                success: function (response) {
+                    alert(response);
+                    window.location.href = "/sede";
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
+
+        $(document).ready(function () { GetSede(); });
+        
+    </script>
+</body>
+</html>

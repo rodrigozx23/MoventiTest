@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>ComplejoOlimpiada CRUD</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .edit-btn {
+            background-color: green;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h2>ComplejoOlimpiada List</h2>
+    <table id="complejoOlimpiadaTable">
+        <tr>
+            <th>Id</th>
+            <th>SedeId</th>
+            <th>TipoComplejo</th>
+            <th>Localizacion</th>
+            <th>JefeOrganizacion</th>
+            <th>AreaTotalOcupada</th>
+            <th>Actions</th>
+        </tr>
+    </table>
+
+    <script>
+
+        function addComplejoOlimpiadaRow(id, sedeId, tipoComplejo, localizacion, jefeOrganizacion, areaTotalOcupada) {
+            var table = document.getElementById("complejoOlimpiadaTable");
+            var row = table.insertRow(-1);
+
+            var idCell = row.insertCell(0);
+            var sedeIdCell = row.insertCell(1);
+            var tipoComplejoCell = row.insertCell(2);
+            var localizacionCell = row.insertCell(3);
+            var jefeOrganizacionCell = row.insertCell(4);
+            var areaTotalOcupadaCell = row.insertCell(5);
+            var actionsCell = row.insertCell(6);
+
+            idCell.innerHTML = id;
+            sedeIdCell.innerHTML = sedeId;
+            tipoComplejoCell.innerHTML = tipoComplejo;
+            localizacionCell.innerHTML = localizacion;
+            jefeOrganizacionCell.innerHTML = jefeOrganizacion;
+            areaTotalOcupadaCell.innerHTML = areaTotalOcupada;
+
+            var deleteForm = document.createElement("form");
+            deleteForm.action = "/complejoOlimpiada/Delete";
+            deleteForm.method = "post";
+
+            var editForm = document.createElement("form");
+            editForm.action = "/complejoOlimpiada/Edit/";
+            editForm.method = "get";
+
+            var idInput = document.createElement("input");
+            idInput.type = "hidden";
+            idInput.name = "id";
+            idInput.value = id;
+
+            var deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", function () {
+                var $tr = $(this).closest('tr'); // gets closest parent tr element to the a
+                var id_row = $tr.find("input[name$=id]").val();
+                deleteComplejoOlimpiada(deleteForm, id_row);
+            });
+
+            var editButton = document.createElement("button");
+            editButton.className = "edit-btn";
+            editButton.type = "button";
+            editButton.textContent = "Edit";
+            editButton.addEventListener("click", function () {
+                var $tr = $(this).closest('tr'); // gets closest parent tr element to the a
+                var id_row = $tr.find("input[name$=id]").val();
+                editComplejoOlimpiada(editForm, id_row);
+            });
+
+            deleteForm.appendChild(idInput);
+            deleteForm.appendChild(deleteButton);
+            editForm.appendChild(idInput);
+            editForm.appendChild(editButton);
+            actionsCell.appendChild(deleteForm);
+            actionsCell.appendChild(editForm);
+        }
+
+        function deleteComplejoOlimpiada(form, id_row) {
+
+            $.ajax({
+                url: form.action,
+                type: "POST",
+                data: {
+                    id: id_row
+                },
+                success: function (response) {
+
+                    alert("Sede deleted successfully.");
+                    // Optionally, you can remove the row from the table
+                    form.parentNode.parentNode.remove();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
+
+        function editComplejoOlimpiada(form, id_row) {
+            window.location.href = form.action + id_row;
+        }
+
+        function getSedeData() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/complejoOlimpiada/ComplejoOlimpiadaDetails", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var complejoOlimpiadaData = JSON.parse(xhr.responseText);
+                    for (var i = 0; i < complejoOlimpiadaData.length; i++) {
+                        var complejoOlimpiada = complejoOlimpiadaData[i];
+                        console.log(complejoOlimpiada);
+                        addComplejoOlimpiadaRow(
+                            complejoOlimpiada.id,
+                            complejoOlimpiada.sedeId,
+                            complejoOlimpiada.tipoComplejo,
+                            complejoOlimpiada.localizacion,
+                            complejoOlimpiada.jefeOrganizacion,
+                            complejoOlimpiada.areaTotalOcupada
+                        );
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        getSedeData();
+    </script>
+</body>
+</html>
